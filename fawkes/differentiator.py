@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Date    : 2020-05-17
 # @Author  : Shawn Shan (shansixiong@cs.uchicago.edu)
