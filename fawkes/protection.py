@@ -7,6 +7,7 @@ import glob
 import logging
 import os
 import sys
+import time
 
 import tensorflow as tf
 
@@ -104,11 +105,13 @@ class Fawkes(object):
             raise Exception("No images in the directory")
         with graph.as_default():
             faces = Faces(image_paths, loaded_images, self.aligner, verbose=1)
+            print('d', time.perf_counter())
 
             original_images = faces.cropped_faces
             original_images = np.array(original_images)
 
             with sess.as_default():
+                print('e', time.perf_counter())
                 if separate_target:
                     target_embedding = []
                     for org_img in original_images:
@@ -116,15 +119,18 @@ class Fawkes(object):
                         tar_emb = select_target_label(org_img, self.feature_extractors_ls, self.fs_names)
                         target_embedding.append(tar_emb)
                     target_embedding = np.concatenate(target_embedding)
+                    print('f', time.perf_counter())
                 else:
                     target_embedding = select_target_label(original_images, self.feature_extractors_ls, self.fs_names)
+                    print('g', time.perf_counter())
 
                 if current_param != self.protector_param:
                     self.protector_param = current_param
+                    print('h', time.perf_counter())
 
                     if self.protector is not None:
                         del self.protector
-
+                    print('i', time.perf_counter())
                     self.protector = FawkesMaskGeneration(sess, self.feature_extractors_ls,
                                                           batch_size=batch_size,
                                                           mimic_img=True,
@@ -137,25 +143,29 @@ class Fawkes(object):
                                                           maximize=False,
                                                           keep_final=False,
                                                           image_shape=(224, 224, 3))
-
+                
+                print('j', time.perf_counter())
                 protected_images = generate_cloak_images(self.protector, original_images,
                                                          target_emb=target_embedding)
-
+                print('k', time.perf_counter())
                 faces.cloaked_cropped_faces = protected_images
-
+                print('l', time.perf_counter()) 
                 cloak_perturbation = reverse_process_cloaked(protected_images) - reverse_process_cloaked(
                     original_images)
+                print('m', time.perf_counter())
                 final_images = faces.merge_faces(cloak_perturbation)
-
+                print('n', time.perf_counter()) 
+        
         for p_img, path in zip(final_images, image_paths):
             file_name = "{}_{}_cloaked.{}".format(".".join(path.split(".")[:-1]), mode, format)
             dump_image(p_img, file_name, format=format)
-
+        print('o', time.perf_counter())
         print("Done!")
         return None
 
 
 def main(*argv):
+    print('a', time.perf_counter())
     if not argv:
         argv = list(sys.argv)
 
@@ -199,11 +209,13 @@ def main(*argv):
 
     image_paths = glob.glob(os.path.join(args.directory, "*"))
     image_paths = [path for path in image_paths if "_cloaked" not in path.split("/")[-1]]
-
+    print('b', time.perf_counter())
     protector = Fawkes(args.feature_extractor, args.gpu, args.batch_size)
+    print('c', time.perf_counter())
     protector.run_protection(image_paths, mode=args.mode, th=args.th, sd=args.sd, lr=args.lr, max_step=args.max_step,
                              batch_size=args.batch_size, format=args.format,
                              separate_target=args.separate_target, debug=args.debug)
+    print('z', time.perf_counter())
 
 
 if __name__ == '__main__':
