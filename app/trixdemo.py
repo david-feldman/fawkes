@@ -25,8 +25,8 @@ def multiply(num):
 def process():
     uploaded_file = request.files['file']
     if uploaded_file.filename != '':
-        uploaded_file.save('/home/ubuntu/fawkes/app/' + uploaded_file.filename)
-    return "That worked!"
+        uploaded_file.save('/home/ubuntu/fawkes/app/tmp/' + uploaded_file.filename)
+    return "That worked!\n"
 
 if __name__ == '__main__':
   app.run()
