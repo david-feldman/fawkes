@@ -6,11 +6,13 @@ import os
 import sys
 import time
 import subprocess
+from base64 import b64decode
 from fawkes.protection import Fawkes
 from format_demo_output import format_demo_output
+from flask_cors import CORS
 
 app = Flask(__name__)
-APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+CORS(app)
 random.seed(datetime.now())
 protector = Fawkes("high_extract", "0", 1)
 
@@ -35,9 +37,10 @@ def process(mode):
     else:
         return "Incorrect mode specification!\n"
     
-    uploaded_file = request.files['file']
     fname = get_random_string(12)
-    uploaded_file.save('/home/ubuntu/fawkes/app/tmp/' + fname + '.png')
+    print(request.form['file'][0:100])
+    with open('/home/ubuntu/fawkes/app/tmp/' + fname + '.png',"wb") as f:
+        f.write(b64decode(request.form['file'].split('base64,')[1]))
     file_ra = ['/home/ubuntu/fawkes/app/tmp/' + fname + '.png']
 
 
