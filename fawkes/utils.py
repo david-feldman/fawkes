@@ -217,9 +217,9 @@ def init_gpu(gpu_index, force=False):
         gpu_num = ','.join([str(i) for i in gpu_index])
     else:
         gpu_num = str(gpu_index)
-    if "CUDA_VISIBLE_DEVICES" in os.environ and os.environ["CUDA_VISIBLE_DEVICES"] and not force:
-        print('GPU already initiated')
-        return
+    #if "CUDA_VISIBLE_DEVICES" in os.environ and os.environ["CUDA_VISIBLE_DEVICES"] and not force:
+    #    print('GPU already initiated')
+    #    return
     os.environ["CUDA_VISIBLE_DEVICES"] = gpu_num
     sess = fix_gpu_memory()
     return sess
