@@ -7,7 +7,7 @@ import sys
 import time
 import subprocess
 from fawkes.protection import Fawkes
-
+from format_demo_output import format_demo_output
 
 app = Flask(__name__)
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -36,18 +36,19 @@ def process(mode):
         return "Incorrect mode specification!\n"
     
     uploaded_file = request.files['file']
-    fname = get_random_string(12) + '.png' # this is a lie and a hack
-    uploaded_file.save('/home/ubuntu/fawkes/app/tmp/' + fname )
-    file_ra = ['/home/ubuntu/fawkes/app/tmp/' + fname]
+    fname = get_random_string(12)
+    uploaded_file.save('/home/ubuntu/fawkes/app/tmp/' + fname + '.png')
+    file_ra = ['/home/ubuntu/fawkes/app/tmp/' + fname + '.png']
 
 
     try:
         protector.run_protection(file_ra, mode=fawkes_mode, th=.01, sd=1e9, lr=2, max_step=1000, batch_size=1, format="png", separate_target=True, debug=False)
     except Exception as inst:
-        return "Processing error!\n"
+        return "Something went wrong!\n"
 
-    return "That worked!\n"
+    out_url = format_demo_output(fname, '/home/ubuntu/fawkes/app/tmp/' + fname + '.png', '/home/ubuntu/fawkes/app/tmp/' + fname + '_' + fawkes_mode + '_cloaked' + '.png')
+    return out_url
 
 if __name__ == '__main__':
     app.debug = True
-    app.run()
+    app.run(host="0.0.0.0", port=80)
