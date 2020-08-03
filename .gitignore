@@ -8,6 +8,9 @@ keras/datasets/temp/*
 tags
 fawkes.egg-info
 app/tmp/*
+app/gunicorn-error.log
+app/__pycache__/*
+app/*.pyc
 
 # test-related
 .coverage

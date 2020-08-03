@@ -1,7 +1,7 @@
 import sys
 import os
 from PIL import Image, ImageDraw, ImageFont
-
+import subprocess
 
 def format_demo_output(image_name, image_1, image_2):
     names = [image_1,image_2]
@@ -44,5 +44,10 @@ def format_demo_output(image_name, image_1, image_2):
         x_offset += im.size[0]
     save_path = '/home/ubuntu/fawkes/app/tmp/' + image_name + '_output.jpg'
     new_im.save(save_path)
-    os.system("aws s3 cp %s s3://trix-public --acl=public-read" % save_path)
+    try:
+        logs = subprocess.check_output("/usr/bin/aws s3 cp %s s3://trix-public --acl=public-read" % save_path, shell=True)
+    except subprocess.CalledProcessError as e:
+        print(e, file=sys.stderr)
+        return "woof"
+    #os.system("aws s3 cp %s s3://trix-public --acl=public-read" % save_path)
     return 'https://trix-public.s3-us-west-2.amazonaws.com/' + image_name + '_output.jpg'
