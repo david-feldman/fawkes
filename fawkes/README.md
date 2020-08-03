@@ -1,35 +1,70 @@
-# Fawkes Binary
+Fawkes
+------
 
-This application is built for individuals to cloak their images before uploading to the Internet. For more information about the project, please refer to our project [webpage](http://sandlab.cs.uchicago.edu/fawkes/).  
+Fawkes is a privacy protection system developed by researchers at [SANDLab](http://sandlab.cs.uchicago.edu/), University of Chicago. For more information about the project, please refer to our project [webpage](http://sandlab.cs.uchicago.edu/fawkes/). Contact as at fawkes-team@googlegroups.com. 
 
-If you are a developer or researcher planning to customize and modify on our existing code. Please refer to [fawkes](https://github.com/Shawn-Shan/fawkes/tree/master/). 
+We published an academic paper to summarize our work "[Fawkes: Protecting Personal Privacy against Unauthorized Deep Learning Models](https://www.shawnshan.com/files/publication/fawkes.pdf)" at *USENIX Security 2020*. 
 
-### How to Setup
-
-#### MAC:
-
-* Download the binary following this [link](http://sandlab.cs.uchicago.edu/fawkes/files/fawkes_binary.zip) and unzip the download file. 
-* Create a directory and move all the images you wish to protect into that directory. Note the path to that directory (e.g. ~/Desktop/images). 
-* Open [terminal](https://support.apple.com/guide/terminal/open-or-quit-terminal-apd5265185d-f365-44cb-8b09-71a064a42125/mac) and change directory to fawkes (the unzipped folder). 
-* (If your MacOS is Catalina) Run `sudo spctl --master-disable` to enable running apps from unidentified developer. We are working on a solution to bypass this step. 
-* Run `./protection-v0.2 -d IMAGE_DIR_PATH` to generate cloak for images in `IMAGE_DIR_PATH`. 
-* When the cloaked image is generated, it will output a `*_low_cloaked.png` image in `IMAGE_DIR_PATH`. The generation takes ~40 seconds per image depending on the hardware. 
+If you would like to use Fawkes to protect your identity, please check out our binary implementation on the [website](http://sandlab.cs.uchicago.edu/fawkes/#code). 
 
 
-#### PC:
-* Download the binary following this [link](http://sandlab.cs.uchicago.edu/fawkes/files/fawkes_binary_windows.zip) and unzip the download file. 
-* Create a directory and move all the images you wish to protect into that directory. Note the path to that directory (e.g. ~/Desktop/images). 
-* Open terminal(powershell or cmd) and change directory to protection (the unzipped folder). 
-* Run `protection-v0.1 -d IMAGE_DIR_PATH` to generate cloak for images in `IMAGE_DIR_PATH`. 
-* When the cloaked image is generated, it will output a `*_low_cloaked.png` image in `IMAGE_DIR_PATH`. The generation takes ~40 seconds per image depending on the hardware. 
+Copyright
+---------
+This code is intended only for personal privacy protection or academic research. 
 
-#### Linux:
-* Download the binary following this [link](http://sandlab.cs.uchicago.edu/fawkes/files/fawkes_binary_linux.zip) and unzip the download file. 
-* Create a directory and move all the images you wish to protect into that directory. Note the path to that directory (e.g. ~/Desktop/images). 
-* Open terminal and change directory to protection (the unzipped folder). 
-* Run `./protection-v0.2 -d IMAGE_DIR_PATH` to generate cloak for images in `IMAGE_DIR_PATH`. 
-* When the cloaked image is generated, it will output a `*_low_cloaked.png` image in `IMAGE_DIR_PATH`. The generation takes ~40 seconds per image depending on the hardware. 
+We are currently exploring the filing of a provisional patent on the Fawkes algorithm. 
+
+Usage
+-----
+
+`$ fawkes`
+
+Options:
+
+* `-m`, `--mode`       : the tradeoff between privacy and perturbation size
+* `-d`, `--directory`  : the directory with images to run protection 
+* `-g`, `--gpu`        : the GPU id when using GPU for optimization
+* `--batch-size`       : number of images to run optimization together 
+* `--format`      : format of the output image. 
+
+when --mode is `custom`: 
+* `--th`       : perturbation threshold
+* `--max-step`       : number of optimization steps to run 
+* `--lr`       : learning rate for the optimization
+* `--feature-extractor` : name of the feature extractor to use
+* `--separate_target`   : whether select separate targets for each faces in the diectory. 
+
+### Example
+
+`fawkes -d ./imgs --mode mid`
+
+### Tips
+- The perturbation generation takes ~60 seconds per image on a CPU machine, and it would be much faster on a GPU machine. Use `batch-size=1` on CPU and `batch-size>1` on GPUs. 
+- Turn on separate target if the images in the directory belong to different person, otherwise, turn it off. 
+- Run on GPU. The current fawkes package and binary does not support GPU. To use GPU, you need to clone this, install the required packages in `setup.py`, and replace tensorflow with tensorflow-gpu. Then you can run fawkes by `python3 fawkes/protection.py [args]`. 
+
+### How do I know my images are secure? 
+We are actively working on this. Python script that can test the protection effectiveness will be ready shortly. 
+
+Quick Installation
+------------------
+
+Install from [PyPI][pypi_fawkes]:
+
+```
+pip install fawkes
+```
+
+If you don't have root privilege, please try to install on user namespace: `pip install --user fawkes`.
 
 
-More details on the optional parameters check out the [github repo](https://github.com/Shawn-Shan/fawkes/tree/master/). 
 
+### Citation
+```
+@inproceedings{shan2020fawkes,
+  title={Fawkes: Protecting Personal Privacy against Unauthorized Deep Learning Models},
+  author={Shan, Shawn and Wenger, Emily and Zhang, Jiayun and Li, Huiying and Zheng, Haitao and Zhao, Ben Y},
+  booktitle="Proc. of USENIX Security",
+  year={2020}
+}
+```
