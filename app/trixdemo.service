@@ -1,0 +1,14 @@
+[Unit]
+Description=Gunicorn instance to serve myproject
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/fawkes/app
+Environment="PATH=/home/ubuntu/fawkes/app/venv/bin"
+ExecStart=/home/ubuntu/fawkes/app/venv/bin/gunicorn --workers 2 --bind unix:trixdemo.sock -m 007 trixdemo:app --error-logfile /home/ubuntu/fawkes/app/gunicorn-error.log --log-level=debug --capture-output --timeout 50000
+
+[Install]
+WantedBy=multi-user.target
+
